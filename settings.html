@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #2e2e2e; /* Dark background color */
+    }
+    .titlebar {
+            height: 32px;
+            background-color: #2b2b2b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            -webkit-app-region: drag; /* Allow dragging the window */
+        }
+        .titlebar-buttons {
+            display: flex;
+        }
+        .titlebar-button {
+            width: 46px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-app-region: no-drag; /* Prevent buttons from being draggable */
+            cursor: pointer;
+        }
+        .titlebar-button:hover {
+            background-color: #3b3b3b;
+        }
+        .titlebar-button:active {
+            background-color: #4b4b4b;
+        }
+        .titlebar-title {
+            padding-left: 10px;
+            -webkit-app-region: drag; /* Allow dragging the window */
+        }
+  </style>
+</head>
+<body>
+  <div class="titlebar">
+    <div class="titlebar-title">Mastro Clock</div>
+    <div class="titlebar-buttons">
+        <div id="minimize-button" class="titlebar-button">-</div>
+        <div id="close-button" class="titlebar-button">×</div>
+    </div>
+  </div>
+  <h1>Settings</h1>
+  <form id="settings-form">
+    <label>
+      Show Clock:
+      <input type="checkbox" name="showClock">
+    </label>
+    <label>
+      Show Seconds:
+      <input type="checkbox" name="showSeconds">
+    </label>
+    <label>
+      Draggable:
+      <input type="checkbox" name="draggable">
+    </label>
+    <label>
+      Make Translucent When Not Used:
+      <input type="checkbox" name="translucent">
+    </label>
+    <label>
+      Start on Startup:
+      <input type="checkbox" name="startOnStartup">
+    </label>
+    <label>
+      Animations:
+      <input type="checkbox" name="animations">
+    </label>
+  </form>
+  <a href="index.html" class="btn">Home</a>
+</body>
+<script src="renderer.js"></script>
+</html>

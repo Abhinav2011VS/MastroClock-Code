@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastro Clock</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Transformers, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #2e2e2e; /* Dark background color */
+    }
+    .container {
+      text-align: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #0078d7; /* Microsoft Edge blue */
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer; /* Make the entire button clickable */
+      transition: background-color 0.3s; /* Add transition for hover effect */
+    }
+    .btn:hover {
+      background-color: #005a9e; /* Darken button color on hover */
+    }
+    h1 {
+      font-size: 45px;
+      color: white;
+      margin-bottom: 20px; /* Add margin to create space between heading and link */
+    }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <h1>Your Clock has been launched!</h1>
+  </div>
+  <script>
+    setTimeout(function() {
+        window.location.href = 'page3.html';
+    }, 5000);
+</script>
+</body>
+</html>
