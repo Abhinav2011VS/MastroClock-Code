@@ -1,6 +1,6 @@
 appId: 'masrto-clock'
 productName: 'Mastro Clock'
-artifactName: '${productName}-installer-${version}.${ext}'
+artifactName: 'MastroClock-installer-${version}.${ext}'
 
 copyright: 'Copyright © 2024 Abhinav VS'
 
@@ -33,7 +33,7 @@ mac:
       arch:
         - 'x64'
         - 'arm64'
-  artifactName: '${productName}-installer-${version}-${arch}.${ext}'
+  artifactName: 'MastroClock-installer-${version}-${arch}.${ext}'
   category: 'public.app-category.customizations'
 
 # Linux Configuration

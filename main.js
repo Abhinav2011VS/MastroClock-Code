@@ -1,99 +1,93 @@
-const remoteMain = require('@electron/remote/main')
-remoteMain.initialize()
+const remoteMain = require('@electron/remote/main');
+remoteMain.initialize();
 
 // Requirements
-const { app, BrowserWindow, ipcMain, Menu, Tray, shell } = require('electron')
-const autoUpdater                       = require('electron-updater').autoUpdater
-const ejse                              = require('ejs-electron')
-const fs                                = require('fs')
-const isDev                             = require('./isdev')
-const path                              = require('path')
-const semver                            = require('semver')
-const { pathToFileURL }                 = require('url')
-const AutoLaunch                        = require('auto-launch');
-const settings                          = require('electron-settings');
+const { app, BrowserWindow, ipcMain, Menu, Tray, shell } = require('electron');
+const autoUpdater = require('electron-updater').autoUpdater;
+const ejse = require('ejs-electron');
+const fs = require('fs');
+const isDev = require('./isdev');
+const path = require('path');
+const semver = require('semver');
+const { pathToFileURL } = require('url');
+const AutoLaunch = require('auto-launch');
+const settings = require('electron-settings');
 
 // Setup auto updater.
 function initAutoUpdater(event, data) {
 
-  if(data){
-      autoUpdater.allowPrerelease = true
+  if (data) {
+    autoUpdater.allowPrerelease = true;
   } else {
-      // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
-      // autoUpdater.allowPrerelease = true
+    // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
+    // autoUpdater.allowPrerelease = true;
   }
-  
-  if(isDev){
-      autoUpdater.autoInstallOnAppQuit = false
-      autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
+
+  if (isDev) {
+    autoUpdater.autoInstallOnAppQuit = false;
+    autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml');
   }
-  if(process.platform === 'darwin'){
-      autoUpdater.autoDownload = false
+  if (process.platform === 'darwin') {
+    autoUpdater.autoDownload = false;
   }
   autoUpdater.on('update-available', (info) => {
-      event.sender.send('autoUpdateNotification', 'update-available', info)
-  })
+    event.sender.send('autoUpdateNotification', 'update-available', info);
+  });
   autoUpdater.on('update-downloaded', (info) => {
-      event.sender.send('autoUpdateNotification', 'update-downloaded', info)
-  })
+    event.sender.send('autoUpdateNotification', 'update-downloaded', info);
+  });
   autoUpdater.on('update-not-available', (info) => {
-      event.sender.send('autoUpdateNotification', 'update-not-available', info)
-  })
+    event.sender.send('autoUpdateNotification', 'update-not-available', info);
+  });
   autoUpdater.on('checking-for-update', () => {
-      event.sender.send('autoUpdateNotification', 'checking-for-update')
-  })
+    event.sender.send('autoUpdateNotification', 'checking-for-update');
+  });
   autoUpdater.on('error', (err) => {
-      event.sender.send('autoUpdateNotification', 'realerror', err)
-  }) 
+    event.sender.send('autoUpdateNotification', 'realerror', err);
+  });
 }
 
 // Open channel to listen for update actions.
 ipcMain.on('autoUpdateAction', (event, arg, data) => {
-  switch(arg){
-      case 'initAutoUpdater':
-          console.log('Initializing auto updater.')
-          initAutoUpdater(event, data)
-          event.sender.send('autoUpdateNotification', 'ready')
-          break
-      case 'checkForUpdate':
-          autoUpdater.checkForUpdates()
-              .catch(err => {
-                  event.sender.send('autoUpdateNotification', 'realerror', err)
-              })
-          break
-      case 'allowPrereleaseChange':
-          if(!data){
-              const preRelComp = semver.prerelease(app.getVersion())
-              if(preRelComp != null && preRelComp.length > 0){
-                  autoUpdater.allowPrerelease = true
-              } else {
-                  autoUpdater.allowPrerelease = data
-              }
-          } else {
-              autoUpdater.allowPrerelease = data
-          }
-          break
-      case 'installUpdateNow':
-          autoUpdater.quitAndInstall()
-          break
-      default:
-          console.log('Unknown argument', arg)
-          break
+  switch (arg) {
+    case 'initAutoUpdater':
+      console.log('Initializing auto updater.');
+      initAutoUpdater(event, data);
+      event.sender.send('autoUpdateNotification', 'ready');
+      break;
+    case 'checkForUpdate':
+      autoUpdater.checkForUpdates()
+        .catch(err => {
+          event.sender.send('autoUpdateNotification', 'realerror', err);
+        });
+      break;
+    case 'allowPrereleaseChange':
+      if (!data) {
+        const preRelComp = semver.prerelease(app.getVersion());
+        if (preRelComp != null && preRelComp.length > 0) {
+          autoUpdater.allowPrerelease = true;
+        } else {
+          autoUpdater.allowPrerelease = data;
+        }
+      } else {
+        autoUpdater.allowPrerelease = data;
+      }
+      break;
+    case 'installUpdateNow':
+      autoUpdater.quitAndInstall();
+      break;
+    default:
+      console.log('Unknown argument', arg);
+      break;
   }
-})
+});
 // Redirect distribution index event from preloader to renderer.
 ipcMain.on('distributionIndexDone', (event, res) => {
-  event.sender.send('distributionIndexDone', res)
-})
-
-// Disable hardware acceleration.
-// https://electronjs.org/docs/tutorial/offscreen-rendering
-app.disableHardwareAcceleration()
+  event.sender.send('distributionIndexDone', res);
+});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
-
 let mainWindow;
 let clockWindow;
 let tray;
@@ -170,7 +164,7 @@ async function createClockWindow() {
 app.whenReady().then(async () => {
   const Store = (await import('electron-store')).default; // Dynamic import
   const store = new Store();
-  
+
   // Always create the main window when the app is ready
   createMainWindow();
 
