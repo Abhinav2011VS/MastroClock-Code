@@ -13,6 +13,8 @@
       flex-direction: column;
       height: 100vh;
       background-color: #2e2e2e; /* Dark background color */
+      align-items: center; /* Center the content horizontally */
+      justify-content: center; /* Center the content vertically */
     }
     .container {
       text-align: center;
@@ -38,12 +40,21 @@
       color: white;
       margin-bottom: 20px; /* Add margin to create space between heading and link */
     }
+    h2 {
+      font-size: 35px;
+      color: white;
+    }
+    img {
+      display: block;
+      margin: 0 auto; /* Center the image horizontally */
+    }
   </style>
 </head>
 <body>
   <div id="main">
+    <img src="icon.png" alt="Icon" width="300px" height="300px" style="text-align: center; align-items: center; align-self: center;">
     <h1>Mastro Clock</h1>
-    <h1>Have a great day!</h1>
+    <h2>Have a great day!</h2>
   </div>
 </body>
 </html>

@@ -13,6 +13,8 @@
       flex-direction: column;
       height: 100vh;
       background-color: #2e2e2e; /* Dark background color */
+      align-items: center; /* Center the content horizontally */
+      justify-content: center; /* Center the content vertically */
     }
     .container {
       text-align: center;
@@ -38,16 +40,21 @@
       color: white;
       margin-bottom: 20px; /* Add margin to create space between heading and link */
     }
+    img {
+      display: block;
+      margin: 0 auto; /* Center the image horizontally */
+    }
   </style>
 </head>
 <body>
   <div id="main">
+    <img src="icon.png" alt="Icon" width="400px" height="400px" style="text-align: center; align-items: center; align-self: center;">
     <h1>Welcome to Mastro Clock</h1>
   </div>
   <script>
     setTimeout(function() {
         window.location.href = 'page2.html';
-    }, 2000);
+    }, 5000);
 </script>
 </body>
 </html>

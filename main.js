@@ -1,58 +1,47 @@
-const remoteMain = require('@electron/remote/main');
-remoteMain.initialize();
-
-// Requirements
-const { app, BrowserWindow, ipcMain, Menu, Tray, shell } = require('electron');
-const autoUpdater = require('electron-updater').autoUpdater;
-const ejse = require('ejs-electron');
-const fs = require('fs');
-const isDev = require('./isdev');
+const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
-const semver = require('semver');
-const { pathToFileURL } = require('url');
-const AutoLaunch = require('auto-launch');
-const settings = require('electron-settings');
 
-// Setup auto updater.
-function initAutoUpdater(event, data) {
+// Function to initialize auto-updates
+function initAutoUpdater() {
+  autoUpdater.autoDownload = true; // Automatically download updates
+  autoUpdater.allowPrerelease = false; // Do not allow prerelease updates by default
 
-  if (data) {
-    autoUpdater.allowPrerelease = true;
-  } else {
-    // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
-    // autoUpdater.allowPrerelease = true;
-  }
+  // Specify the repository for auto-updates
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'Abhinav2011VS',
+    repo: 'MastroClock',
+    // Specify the target platform and architecture (optional)
+    platform: process.platform,
+    arch: process.arch
+  });
 
-  if (isDev) {
-    autoUpdater.autoInstallOnAppQuit = false;
-    autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml');
-  }
-  if (process.platform === 'darwin') {
-    autoUpdater.autoDownload = false;
-  }
-  autoUpdater.on('update-available', (info) => {
-    event.sender.send('autoUpdateNotification', 'update-available', info);
+  // Check for updates
+  autoUpdater.checkForUpdates();
+
+  // Listen for update available event
+  autoUpdater.on('update-available', () => {
+    mainWindow.webContents.send('autoUpdateNotification', 'update-available');
   });
-  autoUpdater.on('update-downloaded', (info) => {
-    event.sender.send('autoUpdateNotification', 'update-downloaded', info);
+
+  // Listen for update downloaded event
+  autoUpdater.on('update-downloaded', () => {
+    mainWindow.webContents.send('autoUpdateNotification', 'update-downloaded');
   });
-  autoUpdater.on('update-not-available', (info) => {
-    event.sender.send('autoUpdateNotification', 'update-not-available', info);
-  });
-  autoUpdater.on('checking-for-update', () => {
-    event.sender.send('autoUpdateNotification', 'checking-for-update');
-  });
-  autoUpdater.on('error', (err) => {
-    event.sender.send('autoUpdateNotification', 'realerror', err);
+
+  // Listen for error event
+  autoUpdater.on('error', (error) => {
+    mainWindow.webContents.send('autoUpdateNotification', 'realerror', error);
   });
 }
 
-// Open channel to listen for update actions.
+// Open channel to listen for update actions
 ipcMain.on('autoUpdateAction', (event, arg, data) => {
   switch (arg) {
     case 'initAutoUpdater':
       console.log('Initializing auto updater.');
-      initAutoUpdater(event, data);
+      initAutoUpdater();
       event.sender.send('autoUpdateNotification', 'ready');
       break;
     case 'checkForUpdate':
@@ -60,18 +49,6 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
         .catch(err => {
           event.sender.send('autoUpdateNotification', 'realerror', err);
         });
-      break;
-    case 'allowPrereleaseChange':
-      if (!data) {
-        const preRelComp = semver.prerelease(app.getVersion());
-        if (preRelComp != null && preRelComp.length > 0) {
-          autoUpdater.allowPrerelease = true;
-        } else {
-          autoUpdater.allowPrerelease = data;
-        }
-      } else {
-        autoUpdater.allowPrerelease = data;
-      }
       break;
     case 'installUpdateNow':
       autoUpdater.quitAndInstall();
@@ -81,6 +58,7 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
       break;
   }
 });
+
 // Redirect distribution index event from preloader to renderer.
 ipcMain.on('distributionIndexDone', (event, res) => {
   event.sender.send('distributionIndexDone', res);
@@ -91,12 +69,6 @@ ipcMain.on('distributionIndexDone', (event, res) => {
 let mainWindow;
 let clockWindow;
 let tray;
-
-// Create an AutoLaunch instance
-const autoLauncher = new AutoLaunch({
-  name: 'Mastro Clock',
-  path: app.getPath('exe'),
-});
 
 async function createMainWindow() {
   if (mainWindow) {
@@ -161,16 +133,15 @@ async function createClockWindow() {
   });
 }
 
-app.whenReady().then(async () => {
-  const Store = (await import('electron-store')).default; // Dynamic import
-  const store = new Store();
+app.whenReady().then(() => {
+  // Initialize auto-updater
+  initAutoUpdater();
 
-  // Always create the main window when the app is ready
+  // Create the main window
   createMainWindow();
 
-  if (store.get('showClock', true)) {
-    createClockWindow();
-  }
+  // Create the clock window
+  createClockWindow();
 
   tray = new Tray(path.join(__dirname, 'icon.png'));
   const contextMenu = Menu.buildFromTemplate([
@@ -194,12 +165,12 @@ app.whenReady().then(async () => {
       click: () => {
         if (clockWindow) {
           clockWindow.close();
+          clockWindow = null; // Reset clockWindow reference
         }
       }
     },
     {
       label: 'Start Clock',
-      enabled: !clockWindow,
       click: () => {
         if (!clockWindow) {
           createClockWindow();
@@ -207,20 +178,6 @@ app.whenReady().then(async () => {
       }
     },
     { type: 'separator' },
-    {
-      label: 'Enable Auto Launch',
-      type: 'checkbox',
-      checked: store.get('autoLaunch', false),
-      click: (menuItem) => {
-        const enabled = menuItem.checked;
-        store.set('autoLaunch', enabled);
-        if (enabled) {
-          autoLauncher.enable();
-        } else {
-          autoLauncher.disable();
-        }
-      }
-    },
     {
       label: 'Quit',
       click: () => {
@@ -230,11 +187,6 @@ app.whenReady().then(async () => {
   ]);
   tray.setToolTip('Mastro Clock');
   tray.setContextMenu(contextMenu);
-
-  // Enable auto-launch if it was previously enabled
-  if (store.get('autoLaunch', false)) {
-    autoLauncher.enable();
-  }
 });
 
 ipcMain.on('update-settings', async (event, settings) => {

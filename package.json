@@ -20,32 +20,16 @@
         "dist:linux": "npm run dist -- -l",
         "lint": "eslint --config .eslintrc.json ."
     },
-    "engines": {
-        "node": "20.x.x"
-    },
     "devDependencies": {
         "electron": "^25.9.8",
         "electron-builder": "^24.13.3"
     },
     "dependencies": {
         "@electron/remote": "^2.1.2",
-        "adm-zip": "^0.5.12",
         "auto-launch": "^5.0.6",
-        "discord-rpc-patch": "^4.0.1",
-        "ejs": "^3.1.10",
-        "ejs-electron": "^3.0.0",
         "electron-settings": "^4.0.4",
         "electron-store": "^9.0.0",
         "electron-updater": "^6.1.8",
-        "eslint": "^9.3.0",
-        "fs": "^0.0.1-security",
-        "fs-extra": "^11.2.0",
-        "github-syntax-dark": "^0.5.0",
-        "got": "^14.3.0",
-        "jquery": "^3.7.1",
-        "lodash.merge": "^4.6.2",
-        "path": "^0.12.7",
-        "semver": "^7.6.2",
-        "toml": "^3.0.0"
+        "fs-extra": "^11.2.0"
     }
 }
