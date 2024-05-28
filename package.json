@@ -1,15 +1,15 @@
 {
     "name": "mastro-clock",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "productName": "Mastro Clock",
     "description": "A customizable hovering clock",
     "author": {
         "email": "abhinav2011vs@gmail.com",
         "name": "Abhinav VS",
-        "url": "https://"
+        "url": "https://mastroclock.pages.dev"
     },
     "license": "All Rights Reserved",
-    "homepage": "https://",
+    "homepage": "https://mastroclock.pagse.dev",
     "main": "main.js",
     "icon": "icon.png",
     "scripts": {
