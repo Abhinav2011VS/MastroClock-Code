@@ -31,11 +31,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run dist
         shell: bash
-      
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: built-files
+          name: built-files-${{ matrix.os }}  # Append OS to artifact name for uniqueness
           path: |
             dist/**/*.dmg
             dist/**/*.exe
