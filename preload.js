@@ -5,3 +5,8 @@ contextBridge.exposeInMainWorld('electron', {
   onSettingsChanged: (callback) => ipcRenderer.on('settings-changed', callback),
   closeClockWindow: () => ipcRenderer.send('close-clock-window'),
 });
+
+// Listen for theme updates
+ipcRenderer.on('update-theme', (_, theme) => {
+  document.documentElement.setAttribute('data-theme', theme);
+});

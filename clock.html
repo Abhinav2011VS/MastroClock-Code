@@ -7,21 +7,23 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     body {
-      font-family: Transformers, Arial, sans-serif;      
+      margin: 0;
+      padding: 0;
+      background: transparent; /* Ensure body background is transparent */
+      font-family: Transformers, Arial, sans-serif;
+      overflow: hidden;  /* Prevent scrolling */
     }
-    /* Ensure the close button area is fully clickable */
-    #close-btn-container {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 20px; /* Adjust the width and height of the close button area as needed */
-      height: 20px;
-      cursor: pointer;
-      z-index: 1; /* Ensure it has a higher z-index than the clock container */
-    }
+
     /* Make clock container clickable */
     .clock-container {
       pointer-events: none; /* Make clock container non-clickable */
+      text-align: center;
+      color: white;
+      font-size: 30px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   </style>
 </head>
@@ -29,9 +31,11 @@
   <div class="clock-container" id="clock">
     <span id="time">XX:XX:XX</span>
   </div>
+
   <script>
     const timeElement = document.getElementById('time');
 
+    // Update the time every second
     function updateClock() {
       const now = new Date();
       let hours = now.getHours();
@@ -42,7 +46,7 @@
       timeElement.textContent = `${hours}:${minutes}:${seconds}`;
     }
 
-    setInterval(updateClock, 10);
+    setInterval(updateClock, 1000);  // Update clock every 1 second
     updateClock();
   </script>
 </body>
